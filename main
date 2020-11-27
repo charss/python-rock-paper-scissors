@@ -1,0 +1,54 @@
+import random
+
+
+def read_file():
+    rating_file = open('rating.txt', 'r')
+    ratings = rating_file.readlines()
+    rating_dict = {}
+    for i in ratings:
+        person, rating = i.rstrip("\n").split(" ")
+        rating_dict[person] = int(rating)
+    rating_file.close()
+    return rating_dict
+
+
+move = None
+choices = ["rock", "paper", "scissors"]
+
+players = read_file()
+player = input("Enter your name: ")
+try:
+    players[player]
+except:
+    players[player] = 0
+
+print("Hello,", player)
+game_choices = input()
+if game_choices == "":
+    choices = ["rock", "paper", "scissors"]
+else:
+    choices = game_choices.split(",")
+print("Okay, let's start")
+while True:
+    move = input("Input: ")
+    if move == "!rating":
+        print("Your rating:", players[player])
+        continue
+    elif move == "!exit":
+        print("Bye!")
+        break
+    elif move not in choices:
+        print("Invalid input")
+        continue
+
+    beatables = choices[choices.index(move) + 1:]
+    beatables += [x for x in choices if x != move and x not in beatables]
+    computer = random.choice(choices)
+    if computer in beatables[0:len(beatables) // 2]:
+        print("Sorry, but the computer chose", computer)
+    elif computer in beatables[len(beatables) // 2:]:
+        print("Well done. The computer chose %s and failed" % computer)
+        players[player] += 100
+    else:
+        print("There is a draw (%s)" % move)
+        players[player] += 50
